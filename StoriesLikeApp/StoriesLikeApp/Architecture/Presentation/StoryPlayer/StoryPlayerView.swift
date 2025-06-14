@@ -29,12 +29,16 @@ struct StoryPlayerView<ViewModel: StoryPlayerViewModel>: View {
                     Color.clear
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            viewModel.goBack()
+                            Task {
+                                await viewModel.goBack()
+                            }
                         }
                     Color.clear
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            viewModel.advance()
+                            Task {
+                                await viewModel.advance()
+                            }
                         }
                 }
                 .ignoresSafeArea()
@@ -53,8 +57,10 @@ struct StoryPlayerView<ViewModel: StoryPlayerViewModel>: View {
                     HStack {
                         Spacer()
                         Button(action: {
-                            viewModel.close()
-                            dismiss()
+                            Task {
+                                await viewModel.close()
+                                dismiss()
+                            }
                         }) {
                             Image(systemName: "xmark")
                                 .resizable()
@@ -72,7 +78,9 @@ struct StoryPlayerView<ViewModel: StoryPlayerViewModel>: View {
             HStack {
                 Spacer()
                 Button(action: {
-                    viewModel.toggleLike()
+                    Task {
+                        await viewModel.toggleLike()
+                    }
                 }) {
                     Image(systemName: viewModel.currentStory.isLiked ? "heart.fill" : "heart")
                         .resizable()

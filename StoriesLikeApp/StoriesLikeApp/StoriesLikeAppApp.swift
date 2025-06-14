@@ -11,8 +11,10 @@ import SwiftUI
 struct StoriesLikeAppApp: App {
 
     var body: some Scene {
+        let storyListViewModel = StoryListViewModelImpl(useCase: GetUsersStoriesUseCaseImpl(repository: UsersRepositoryImpl(dataSource: UsersDataSourceImpl())))
+        
         WindowGroup {
-            StoryListView(viewModel: StoryListViewModelImpl())
+            StoryListView(viewModel: storyListViewModel)
         }
     }
 }

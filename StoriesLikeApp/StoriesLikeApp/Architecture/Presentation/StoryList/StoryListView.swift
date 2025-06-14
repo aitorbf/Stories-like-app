@@ -79,7 +79,9 @@ struct StoryListView<ViewModel: StoryListViewModel>: View {
                 let storyGroups = viewModel.users.map { $0.stories }
                 let viewModel = StoryPlayerViewModelImpl(
                     storyGroups: storyGroups,
-                    startGroup: index
+                    startGroup: index,
+                    markStoryAsSeenUseCase: MarkStoryAsSeenUseCaseImpl(repository: StoryPersistenceRepositoryImpl()),
+                    toggleStoryLikeUseCase: ToggleStoryLikeUseCaseImpl(repository: StoryPersistenceRepositoryImpl())
                 )
 
                 StoryPlayerView(viewModel: viewModel)

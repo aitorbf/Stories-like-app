@@ -16,7 +16,7 @@ final class UsersRepositoryImpl: UsersRepository {
     
     private let dataSource: UsersDataSource
     
-    init(dataSource: UsersDataSource = UsersDataSourceImpl()) {
+    init(dataSource: UsersDataSource) {
         self.dataSource = dataSource
     }
 

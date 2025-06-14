@@ -16,10 +16,10 @@ protocol StoryPlayerViewModel: ObservableObject {
     var currentStories: [Story] { get }
     var currentStory: Story { get }
     
-    func advance()
-    func goBack()
-    func toggleLike()
-    func close()
+    func advance() async
+    func goBack() async
+    func toggleLike() async
+    func close() async
 }
 
 final class StoryPlayerViewModelImpl: StoryPlayerViewModel {
@@ -31,54 +31,71 @@ final class StoryPlayerViewModelImpl: StoryPlayerViewModel {
     
     private let storyDuration: TimeInterval = 10
     private var timer: Timer?
+    private let markStoryAsSeenUseCase: MarkStoryAsSeenUseCase
+    private let toggleStoryLikeUseCase: ToggleStoryLikeUseCase
 
-    init(storyGroups: [[Story]], startGroup: Int = 0) {
+    init(
+        storyGroups: [[Story]],
+        startGroup: Int = 0,
+        markStoryAsSeenUseCase: MarkStoryAsSeenUseCase,
+        toggleStoryLikeUseCase: ToggleStoryLikeUseCase
+    ) {
         self.storyGroups = storyGroups
         self.currentGroupIndex = startGroup
         self.currentStoryIndex = 0
         self.progress = Array(repeating: 0, count: storyGroups[startGroup].count)
-        markCurrentAsSeen()
+        self.markStoryAsSeenUseCase = markStoryAsSeenUseCase
+        self.toggleStoryLikeUseCase = toggleStoryLikeUseCase
+        
+        Task {
+            await markCurrentAsSeen()
+        }
         startTimer()
     }
 
     var currentStories: [Story] { storyGroups[currentGroupIndex] }
     var currentStory: Story { currentStories[currentStoryIndex] }
 
-    func advance() {
+    @MainActor
+    func advance() async {
         stopTimer()
         progress[currentStoryIndex] = 1.0
 
         if currentStoryIndex < currentStories.count - 1 {
             currentStoryIndex += 1
         } else {
-            advanceToNextGroup()
+            await advanceToNextGroup()
             return
         }
 
-        markCurrentAsSeen()
+        await markCurrentAsSeen()
         updateProgressBars()
         resetFutureProgress()
         startTimer()
     }
 
-    func goBack() {
+    @MainActor
+    func goBack() async {
         if currentStoryIndex > 0 {
             currentStoryIndex -= 1
-            restartTimer()
+            await restartTimer()
         } else if currentGroupIndex > 0 {
             currentGroupIndex -= 1
             currentStoryIndex = storyGroups[currentGroupIndex].count - 1
             resetProgress(for: currentGroupIndex)
-            markCurrentAsSeen()
-            restartTimer()
+            updateProgressBars()
+            await markCurrentAsSeen()
+            await restartTimer()
         }
     }
 
-    func toggleLike() {
+    @MainActor
+    func toggleLike() async {
         storyGroups[currentGroupIndex][currentStoryIndex].isLiked.toggle()
-        // TODO: persist story as liked
+        try? await toggleStoryLikeUseCase.execute(storyGroups[currentGroupIndex][currentStoryIndex].id)
     }
 
+    @MainActor
     func close() {
         stopTimer()
     }
@@ -86,13 +103,14 @@ final class StoryPlayerViewModelImpl: StoryPlayerViewModel {
 
 private extension StoryPlayerViewModelImpl {
     
-    private func advanceToNextGroup() {
+    @MainActor
+    private func advanceToNextGroup() async {
         stopTimer()
         guard currentGroupIndex < storyGroups.count - 1 else { return }
         currentGroupIndex += 1
         currentStoryIndex = 0
         resetProgress(for: currentGroupIndex)
-        markCurrentAsSeen()
+        await markCurrentAsSeen()
         startTimer()
     }
 
@@ -108,11 +126,12 @@ private extension StoryPlayerViewModelImpl {
         }
     }
 
-    private func restartTimer() {
+    @MainActor
+    private func restartTimer() async  {
         for i in currentStoryIndex..<currentStories.count {
             progress[i] = 0
         }
-        markCurrentAsSeen()
+        await markCurrentAsSeen()
         startTimer()
     }
 
@@ -133,15 +152,16 @@ private extension StoryPlayerViewModelImpl {
         }
     }
 
+    @MainActor
     private func resetProgress(for index: Int) {
         let count = storyGroups[index].count
         progress = Array(repeating: 0, count: count)
     }
 
-    private func markCurrentAsSeen() {
+    @MainActor
+    private func markCurrentAsSeen() async {
         guard !currentStory.isSeen else { return }
-        print("Marking as seen: \(currentStory.id)")
         storyGroups[currentGroupIndex][currentStoryIndex].isSeen = true
-        // TODO: persist story as seen
+        try? await markStoryAsSeenUseCase.execute(storyGroups[currentGroupIndex][currentStoryIndex].id)
     }
 }

@@ -26,7 +26,7 @@ final class StoryListViewModelImpl: StoryListViewModel {
     private var isFetching = false
     private var canLoadMore = true
     
-    init(useCase: GetUsersStoriesUseCase = GetUsersStoriesUseCaseImpl()) {
+    init(useCase: GetUsersStoriesUseCase) {
         self.useCase = useCase
     }
     

@@ -15,7 +15,7 @@ final class GetUsersStoriesUseCaseImpl: GetUsersStoriesUseCase {
     
     private let repository: UsersRepository
 
-    init(repository: UsersRepository = UsersRepositoryImpl()) {
+    init(repository: UsersRepository) {
         self.repository = repository
     }
 
