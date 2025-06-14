@@ -27,7 +27,7 @@ protocol UsersDataSource {
 
 final class UsersDataSourceImpl: UsersDataSource {
     
-    private let filePath = "Resources/users"
+    private let filePath = "users"
     private let fileExtension = "json"
 
     func fetchPage(_ pageIndex: Int) -> UsersPageEntity? {

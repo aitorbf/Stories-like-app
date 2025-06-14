@@ -29,33 +29,9 @@
 		5B1FFC3C2DFD66F4005309A2 /* StoriesLikeAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StoriesLikeAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		5B1FFD082DFD6A37005309A2 /* Exceptions for "StoriesLikeApp" folder in "StoriesLikeApp" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				Resources/users.json,
-			);
-			target = 5B1FFC1F2DFD66F2005309A2 /* StoriesLikeApp */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
-/* Begin PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-		5B1FFD092DFD6A37005309A2 /* Exceptions for "StoriesLikeApp" folder in "Compile Sources" phase from "StoriesLikeApp" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = 5B1FFC1C2DFD66F2005309A2 /* Sources */;
-			membershipExceptions = (
-				Resources/users.json,
-			);
-		};
-/* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		5B1FFC222DFD66F2005309A2 /* StoriesLikeApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				5B1FFD082DFD6A37005309A2 /* Exceptions for "StoriesLikeApp" folder in "StoriesLikeApp" target */,
-				5B1FFD092DFD6A37005309A2 /* Exceptions for "StoriesLikeApp" folder in "Compile Sources" phase from "StoriesLikeApp" target */,
-			);
 			path = StoriesLikeApp;
 			sourceTree = "<group>";
 		};

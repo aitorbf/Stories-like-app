@@ -13,3 +13,9 @@ struct User: Identifiable, Equatable {
     let profilePictureURL: URL
     let stories: [Story]
 }
+
+extension User {
+    var hasUnseenStories: Bool {
+        stories.contains { !$0.isSeen }
+    }
+}
