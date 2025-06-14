@@ -9,13 +9,10 @@ import Foundation
 import SwiftData
 
 protocol UsersRepository {
-    func fetchUsersPage(
-        _ index: Int,
-        context: ModelContext
-    ) throws -> (users: [UserEntity], currentPage: Int, totalPages: Int)
+    func fetchUsersPage(_ index: Int) async throws -> (users: [UserEntity], currentPage: Int, totalPages: Int)
 }
 
-final class UserRepositoryImpl: UsersRepository {
+final class UsersRepositoryImpl: UsersRepository {
     
     private let dataSource: UsersDataSource
     
@@ -23,14 +20,13 @@ final class UserRepositoryImpl: UsersRepository {
         self.dataSource = dataSource
     }
 
-    func fetchUsersPage(
-        _ index: Int,
-        context: ModelContext
-    ) throws -> (users: [UserEntity], currentPage: Int, totalPages: Int) {
+    @MainActor
+    func fetchUsersPage(_ index: Int) async throws -> (users: [UserEntity], currentPage: Int, totalPages: Int) {
         
         guard let result = dataSource.fetchPage(index) else {
             throw NSError(domain: "UserRepository", code: 1, userInfo: [NSLocalizedDescriptionKey: "Page not found"])
         }
+        let context = SwiftDataManager.shared.modelContext
 
         for user in result.users {
             for story in user.stories {
