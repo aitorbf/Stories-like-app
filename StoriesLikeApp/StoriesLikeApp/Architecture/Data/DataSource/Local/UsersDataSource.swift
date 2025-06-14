@@ -47,7 +47,7 @@ final class UsersDataSourceImpl: UsersDataSource {
                 profilePictureURL: URL(string: dto.profile_picture_url)!
             )
             user.stories = (1...3).map { i in
-                let storyId = "\(user.id)-\(i)"
+                let storyId = "\(user.id)\(i)"
                 return StoryEntity(
                     id: storyId,
                     imageURL: URL(string: "https://picsum.photos/id/\(storyId)/600/1000")!,

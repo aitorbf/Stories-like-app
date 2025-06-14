@@ -10,6 +10,8 @@ import SwiftUI
 struct StoryListView<ViewModel: StoryListViewModel>: View {
     
     @StateObject var viewModel: ViewModel
+    
+    @State private var selectedUser: User? = nil
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
@@ -57,6 +59,9 @@ struct StoryListView<ViewModel: StoryListViewModel>: View {
                                     await viewModel.loadMoreStories(currentIndex: index)
                                 }
                             }
+                            .onTapGesture {
+                                selectedUser = user
+                            }
                         }
                     }
                     .padding(.horizontal, 12)
@@ -68,6 +73,24 @@ struct StoryListView<ViewModel: StoryListViewModel>: View {
         }
         .task {
             await viewModel.loadStories()
+        }
+        .fullScreenCover(item: $selectedUser) { selected in
+            if let index = viewModel.users.firstIndex(where: { $0.id == selected.id }) {
+                let storyGroups = viewModel.users.map { $0.stories }
+                let viewModel = StoryPlayerViewModelImpl(
+                    storyGroups: storyGroups,
+                    startGroup: index
+                )
+
+                StoryPlayerView(viewModel: viewModel)
+                    .onDisappear {
+                        Task {
+                            await self.viewModel.updateSeenStatus(for: viewModel.storyGroups)
+                        }
+                    }
+            } else {
+                Color.black.ignoresSafeArea()
+            }
         }
     }
 }

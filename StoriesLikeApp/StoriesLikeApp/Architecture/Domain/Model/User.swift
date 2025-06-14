@@ -11,7 +11,7 @@ struct User: Identifiable, Equatable {
     let id: Int
     let name: String
     let profilePictureURL: URL
-    let stories: [Story]
+    var stories: [Story]
 }
 
 extension User {

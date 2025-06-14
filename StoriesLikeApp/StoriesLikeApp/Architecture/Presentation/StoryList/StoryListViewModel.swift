@@ -13,6 +13,7 @@ protocol StoryListViewModel: ObservableObject {
     
     func loadStories() async
     func loadMoreStories(currentIndex: Int) async
+    func updateSeenStatus(for updatedStories: [[Story]]) async
 }
     
 final class StoryListViewModelImpl: StoryListViewModel {
@@ -56,6 +57,14 @@ final class StoryListViewModelImpl: StoryListViewModel {
         
         if currentIndex >= users.count - 5 {
             await loadStories()
+        }
+    }
+    
+    @MainActor
+    func updateSeenStatus(for updatedStories: [[Story]]) async {
+        for (userIndex, updatedGroup) in updatedStories.enumerated() {
+            guard users.indices.contains(userIndex) else { continue }
+            users[userIndex].stories = updatedGroup
         }
     }
 }
